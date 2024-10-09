@@ -1150,21 +1150,6 @@ public final class HlsPlaylistParser implements ParsingLoadable.Parser<HlsPlayli
       byte[] data = Base64.decode(uriString.substring(uriString.indexOf(',')), Base64.DEFAULT);
       byte[] psshData = PsshAtomUtil.buildPsshAtom(C.PLAYREADY_UUID, data);
       return new SchemeData(C.PLAYREADY_UUID, MimeTypes.VIDEO_MP4, psshData);
-    } else if (KEYFORMAT_PRMNAGRA.equals(keyFormat) && "1".equals(keyFormatVersions)) {
-      String uriString = parseStringAttr(line, REGEX_URI, variableDefinitions);
-      byte[] data = Base64.decode(uriString.substring(uriString.indexOf(',')), Base64.DEFAULT);
-      String str = new String(data, StandardCharsets.UTF_8);
-      JSONObject json = new JSONObject(str);
-      String defaultKid = (String) json.get("key-id");
-      if (!TextUtils.isEmpty(defaultKid)
-            && !"00000000-0000-0000-0000-000000000000".equals(defaultKid)) {
-        String[] defaultKidStrings = defaultKid.split("\\s+");
-        UUID[] defaultKids = new UUID[defaultKidStrings.length];
-        for (int i = 0; i < defaultKidStrings.length; i++) {
-            defaultKids[i] = UUID.fromString(defaultKidStrings[i]);
-        }
-        byte[] psshData = PsshAtomUtil.buildPsshAtom(C.COMMON_PSSH_UUID, defaultKids, null);
-        return new SchemeData(C.COMMON_PSSH_UUID, MimeTypes.VIDEO_MP4, psshData);
     }
     return null;
    }
